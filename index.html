@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment SonnOfficial - Simple & Clean</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <style>
+    /* VARS DENGAN TEMA DARK MINIMALIS (DEFAULT) */
+    :root {
+      --bg-primary: #121212;
+      --bg-secondary: rgba(25, 25, 25, 0.95);
+      --text-primary: #f0f0f0;
+      --text-secondary: #a0a0a0;
+      --accent: #007bff; /* Biru Profesional */
+      --accent-glow: #00bfff;
+      --card-bg: rgba(30, 30, 30, 0.9);
+      --border-color: rgba(60, 60, 60, 0.4);
+      --shadow-dark: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      transition: all .5s ease;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* BACKGROUND SANGAT HALUS */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .nebula-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* Hanya sedikit gradasi agar latar belakang tidak mati */
+      background: radial-gradient(circle at 10% 90%, rgba(0, 123, 255, 0.05) 0%, transparent 60%);
+      z-index: -2;
+    }
+    
+    /* NOTIFIKASI */
+    .notif {
+      position: fixed;
+      bottom: 20px; /* Pindah ke bawah agar tidak mengganggu header */
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: .9rem;
+      z-index: 3000;
+      opacity: 0;
+      transition: transform .4s ease, opacity .4s ease;
+      box-shadow: var(--shadow-dark);
+      white-space: nowrap;
+    }
+    .notif.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* CONTAINER UTAMA */
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .landing-page, .payment-page {
+      width: 100%;
+      max-width: 600px;
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ELEMEN LANDING PAGE */
+    .landing-page { text-align: center; }
+    .profile-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      overflow: hidden;
+      box-shadow: var(--shadow-dark), 0 0 10px rgba(0, 123, 255, 0.3);
+    }
+    h1 {
+      font-size: clamp(2.2rem, 8vw, 3.2rem);
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    .description {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+    }
+    .cta-button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all .3s ease;
+      box-shadow: var(--shadow-dark);
+    }
+    .cta-button:hover {
+      background: var(--accent-glow);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+    }
+
+    /* PAGE PAYMENT & BACK BUTTON */
+    .payment-page {
+      position: relative;
+      padding-top: 50px; /* Ruang untuk tombol kembali */
+    }
+    .back-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 8px;
+      transition: all .3s ease;
+    }
+    .back-btn:hover {
+        color: var(--accent);
+        background: rgba(0, 123, 255, 0.1);
+    }
+    .back-btn span { font-size: 24px; }
+
+    /* CARD PAYMENT */
+    .payment-header { text-align: center; margin-bottom: 30px; }
+    .payment-header h1 { font-size: 2rem; }
+    .payment-header p { font-weight: 600; margin-top: 5px; color: var(--text-secondary); }
+    
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .payment-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all .3s ease;
+      backdrop-filter: blur(5px);
+      box-shadow: var(--shadow-dark);
+    }
+    .payment-card:hover {
+      transform: translateY(-3px); /* Hover ringan */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    }
+    .payment-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .payment-icon span { font-size: 24px; color: #fff; }
+    .payment-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+      color: var(--accent-glow);
+    }
+    .payment-number-wrapper { margin-bottom: 15px; }
+    .payment-number { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .payment-owner { font-size: 0.9rem; color: var(--text-secondary); }
+    
+    /* TOMBOL SALIN */
+    .copy-btn {
+      background: var(--border-color);
+      color: var(--text-primary);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .3s ease;
+      width: 100%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .copy-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+    .copy-btn.copied { background: #10b981; color: white; }
+
+    /* QRIS */
+    .qris-container { text-align: center; margin-top: 30px; }
+    .qris-code {
+      width: 200px;
+      height: 200px;
+      background: white;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: var(--shadow-dark);
+      cursor: pointer;
+      transition: transform .3s ease;
+    }
+    .qris-code:hover { transform: scale(1.03); }
+    .qris-code img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    .qris-actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+    .qris-btn {
+      background: var(--border-color);
+      color: var(--text-primary);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .3s ease;
+    }
+    .qris-btn:hover { background: var(--accent); color: white; }
+
+    /* TOMBOL WHATSAPP */
+    .whatsapp-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        margin-top: 40px;
+        text-decoration: none;
+        background: #25D366; 
+        color: white;
+        padding: 16px 40px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all .3s ease;
+        box-shadow: 0 8px 15px rgba(37, 211, 102, 0.4);
+    }
+    .whatsapp-cta:hover {
+        background: #128C7E;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(37, 211, 102, 0.6);
+    }
+
+    /* QRIS MODAL SAMA SEPERTI SEBELUMNYA */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        position: relative;
+        box-shadow: var(--shadow-dark);
+    }
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #333;
+    }
+    .enlarged-qris {
+        width: 300px;
+        height: 300px;
+        margin: 20px auto;
+    }
+    .enlarged-qris img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+  <div class="nebula-bg"></div>
+
+  <!-- Notifikasi -->
+  <div class="notif" id="notif"></div>
+
+  <!-- Container -->
+  <div class="container">
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+      <!-- GANTI LINK FOTO PROFIL DISINI -->
+      <div class="profile-icon">
+        <img src="https://files.catbox.moe/d1h1h6.png" alt="SonnOfficial" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <h1>SonnOfficial</h1>
+      <p class="description">
+        Selamat datang di payment gateway official. Fokus pada kesederhanaan, kecepatan, dan kenyamanan.
+      </p>
+      <button class="cta-button" onclick="showPaymentPage()">Lanjut ke Payment</button>
+    </div>
+
+    <!-- Payment Page -->
+    <div class="payment-page" id="paymentPage" style="display: none;">
+      <!-- Tombol Kembali Simpel -->
+      <button class="back-btn" onclick="showLandingPage()">
+        <span class="material-symbols-outlined">arrow_back_ios_new</span> Kembali
+      </button>
+
+      <div class="payment-header">
+        <h1>Payment Detail</h1>
+        <p>Pilih metode pembayaran favorit Anda</p>
+      </div>
+
+      <div class="payment-grid">
+        <!-- Dana -->
+        <div class="payment-card">
+          <div class="payment-icon"><span class="material-symbols-outlined">account_balance_wallet</span></div>
+          <div class="payment-name">DANA</div>
+          <div class="payment-number-wrapper">
+            <div class="payment-number" id="danaNumber">081234567890</div>
+            <div class="payment-owner">A/n Tanginihl</div>
+          </div>
+          <button class="copy-btn" onclick="copyToClipboard('083137743419', this)">
+            <span class="material-symbols-outlined">content_copy</span> Salin Nomor
+          </button>
+        </div>
+
+        <!-- Gopay -->
+        <div class="payment-card">
+          <div class="payment-icon"><span class="material-symbols-outlined">payments</span></div>
+          <div class="payment-name">GOPAY</div>
+          <div class="payment-number-wrapper">
+            <div class="payment-number" id="gopayNumber">081234567890</div>
+            <div class="payment-owner">A/n Tanginih</div>
+          </div>
+          <button class="copy-btn" onclick="copyToClipboard('083137743419', this)">
+            <span class="material-symbols-outlined">content_copy</span> Salin Nomor
+          </button>
+        </div>
+      </div>
+
+      <!-- QRIS -->
+      <div class="qris-container">
+        <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: var(--text-primary);">QRIS</h2>
+        <!-- GANTI LINK FOTO QRIS DISINI -->
+        <div class="qris-code" onclick="enlargeQRIS()">
+          <img src="https://files.catbox.moe/qgnarl.png" alt="QRIS Code">
+        </div>
+        <div class="qris-actions">
+          <button class="qris-btn" onclick="downloadQRIS()">Download</button>
+          <button class="qris-btn" onclick="enlargeQRIS()">Perbesar</button>
+        </div>
+      </div>
+
+      <!-- TOMBOL UTAMA KIRIM BUKTI VIA WA -->
+      <a class="whatsapp-cta" href="#" onclick="sendWhatsAppProof(event)">
+        <span class="material-symbols-outlined" style="margin-right: 10px;">whatsapp</span> Kirim Bukti Transfer
+      </a>
+    </div>
+  </div>
+
+  <!-- QRIS Modal -->
+  <div class="modal" id="qrisModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <h2>QRIS Payment</h2>
+      <!-- GANTI LINK FOTO QRIS DISINI -->
+      <div class="enlarged-qris">
+        <img src="https://files.catbox.moe/qgnarl.png" alt="QRIS Code" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <button class="qris-btn" style="background: var(--accent); color: white;" onclick="downloadQRIS()">Download QRIS</button>
+    </div>
+  </div>
+
+  <!-- Audio (tetap disembunyikan) -->
+  <audio id="backgroundMusic" loop></audio>
+  
+  <!-- Partikel JS (Hanya diaktifkan jika memang dibutuhkan) -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    // Nomor WA Admin yang baru
+    const WHATSAPP_NUMBER = '6283159696918';
+    
+    // Pesan default WA (di-URL encode)
+    const WA_MESSAGE = encodeURIComponent(
+      'Halo Admin, saya ingin konfirmasi pembayaran.\n\n' +
+      'Nama: [Sebutkan nama Anda]\n' +
+      'Produk: [Sebutkan produk yang dibeli/donasi]\n' +
+      'Jumlah Transfer: [Sebutkan nominal transfer]\n' +
+      '\n' +
+      '*(Mohon lampirkan foto bukti transfer di chat ini.)*'
+    );
+
+    // Fungsi Notifikasi
+    function showNotif(msg) {
+      const n = document.getElementById('notif');
+      n.textContent = msg;
+      n.classList.add('show');
+      setTimeout(() => n.classList.remove('show'), 3000);
+    }
+
+    // Fungsi mengirim ke WA
+    function sendWhatsAppProof(event) {
+        event.preventDefault(); 
+        const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${WA_MESSAGE}`;
+        window.open(waLink, '_blank');
+        showNotif('Anda diarahkan ke WhatsApp untuk konfirmasi.');
+    }
+
+    // Navigasi halaman
+    function showPaymentPage() {
+      document.getElementById('landingPage').style.display = 'none';
+      document.getElementById('paymentPage').style.display = 'block';
+      showNotif('Halaman payment dibuka');
+    }
+
+    function showLandingPage() {
+      document.getElementById('paymentPage').style.display = 'none';
+      document.getElementById('landingPage').style.display = 'block';
+      showNotif('Kembali ke halaman utama');
+    }
+
+    // Copy clipboard
+    function copyToClipboard(text, btn) {
+      const el = document.createElement('textarea');
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      
+      let success = false;
+      try {
+        // Menggunakan execCommand untuk kompatibilitas yang lebih luas di iframe
+        success = document.execCommand('copy');
+        if (success) {
+          btn.innerHTML = '<span class="material-symbols-outlined">done</span> Tersalin!';
+          btn.classList.add('copied');
+          showNotif('Nomor berhasil disalin');
+          
+          setTimeout(() => {
+            btn.innerHTML = '<span class="material-symbols-outlined">content_copy</span> Salin Nomor';
+            btn.classList.remove('copied');
+          }, 2000);
+        } else {
+          showNotif('Gagal menyalin. Silakan coba salin manual.');
+        }
+      } catch (err) {
+        showNotif('Error saat menyalin. Browser mungkin tidak mendukung.');
+      } finally {
+        document.body.removeChild(el);
+      }
+    }
+
+    // QRIS functions
+    function enlargeQRIS() {
+      document.getElementById('qrisModal').style.display = 'flex';
+      showNotif('QRIS diperbesar');
+    }
+    function closeModal() {
+      document.getElementById('qrisModal').style.display = 'none';
+    }
+    function downloadQRIS() {
+        // GANTI DENGAN URL QRIS ASLI JIKA ADA
+        const imageUrl = 'https://files.catbox.moe/qgnarl.png';
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = 'QRIS_Payment_SonnOfficial.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showNotif('✅ QRIS berhasil didownload!');
+    }
+
+    // Close modal outside
+    window.onclick = function (e) {
+      const m = document.getElementById('qrisModal');
+      if (e.target === m) closeModal();
+    };
+
+    // Init particles (Tetap ada, tapi dibuat sangat tenang dan tidak mengganggu)
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: '#a0a0a0' }, /* Warna abu-abu halus */
+        shape: { type: 'circle' },
+        opacity: { value: 0.2, random: true }, /* Sangat transparan */
+        size: { value: 1, random: true }, /* Sangat kecil */
+        line_linked: { enable: true, distance: 100, color: '#606060', opacity: 0.1, width: 1 }, /* Garis samar */
+        move: { enable: true, speed: 0.5, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false } /* Sangat lambat */
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: false }, resize: true } /* Interaksi diperkecil */
+      }
+    });
+
+    // Dummy functions agar tidak error jika user mengedit kode
+    function toggleTheme() { console.log("Theme Toggle Disabled for simplicity."); }
+    function playMusic() { console.log("Music Player Disabled for simplicity."); }
+    function stopMusic() { console.log("Music Player Disabled for simplicity."); }
+  </script>
+</body>
+</html>
